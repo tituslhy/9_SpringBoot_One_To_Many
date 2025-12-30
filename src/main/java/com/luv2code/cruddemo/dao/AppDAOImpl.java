@@ -136,4 +136,35 @@ public class AppDAOImpl implements AppDAO{
         entityManager.remove(tempCourse);
     }
 
+    /**
+     * Saves the course and all associated reviews due to the cascade
+     * @param theCourse
+     */
+    @Override
+    @Transactional
+    public void save(Course theCourse) {
+        entityManager.persist(theCourse);
+    }
+
+    /**
+     * Note that because we are also finding the reviews we must use join fetch
+     * @param theId
+     * @return Course
+     */
+    @Override
+    public Course findCourseAndReviewsByCourseId(int theId) {
+
+        String sql_query = """
+                select c from Course c
+                join fetch c.reviews
+                where c.id = :data
+                """;
+
+        TypedQuery<Course> query = entityManager.createQuery(sql_query, Course.class);
+        query.setParameter("data", theId);
+
+        Course course = query.getSingleResult();
+        return course;
+    }
+
 }

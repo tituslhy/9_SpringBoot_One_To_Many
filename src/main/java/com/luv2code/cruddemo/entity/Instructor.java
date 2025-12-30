@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name="instructor")
 @ToString
@@ -37,9 +40,30 @@ public class Instructor {
     @JoinColumn(name="instructor_detail_id")
     private InstructorDetail instructorDetail;
 
+    /**
+     * Map by the instructor property in the course class
+     */
+    @OneToMany(
+            mappedBy="instructor",
+            cascade={CascadeType.PERSIST, CascadeType.DETACH,CascadeType.MERGE, CascadeType.REFRESH}
+    )
+    private List<Course> courses;
+
     public Instructor(String first_name, String last_name, String email) {
         this.first_name = first_name;
         this.last_name = last_name;
         this.email = email;
+    }
+
+    /**
+     * Add convenience method for bidirectional relationship between courses and Instructor
+     * @param tempCourse
+     */
+    public void add (Course tempCourse){
+        if (courses == null){
+            courses = new ArrayList<>();
+        }
+        courses.add(tempCourse);
+        tempCourse.setInstructor(this);
     }
 }

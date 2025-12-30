@@ -1,6 +1,7 @@
 package com.luv2code.cruddemo;
 
 import com.luv2code.cruddemo.dao.AppDAO;
+import com.luv2code.cruddemo.entity.Course;
 import com.luv2code.cruddemo.entity.Instructor;
 import com.luv2code.cruddemo.entity.InstructorDetail;
 import org.springframework.boot.CommandLineRunner;
@@ -27,8 +28,40 @@ public class CruddemoApplication {
 //            findInstructor(appDAO);
 //            deleteInstructor(appDAO);
 //            findInstructorDetail(appDAO);
-            deleteInstructorDetail(appDAO);
+//            deleteInstructorDetail(appDAO);
+            
+            createInstructorWithCourses(appDAO);
         };
+    }
+
+    private void createInstructorWithCourses(AppDAO appDAO) {
+        // Create the instructor
+        Instructor tempInstructor = new Instructor("Chad", "Darby", "darby@luv2code.com");
+
+        // Create the instructor detail
+        InstructorDetail tempInstructorDetail = new InstructorDetail(
+                "http://www.luv2code.com/youtube",
+                "Luv 2 code!!!"
+        );
+
+        // Associate the objects - you need to set the instruction detail in your instructor
+        tempInstructor.setInstructorDetail(tempInstructorDetail);
+
+        // Create courses
+        Course tempCourse1 = new Course("Air Guitar");
+        Course tempCourse2 = new Course("Pinball Masterclass");
+
+        // Add courses to instructor
+        tempInstructor.add(tempCourse1);
+        tempInstructor.add(tempCourse2);
+
+        // Save the instructor. Note this will also save the details and courses object
+        // because of CascadeType.PERSIST
+        System.out.println("Saving instructor: " + tempInstructor);
+        System.out.println("The courses: " + tempInstructor.getCourses());
+        appDAO.save(tempInstructor);
+
+        System.out.println("Done!");
     }
 
     private void deleteInstructorDetail(AppDAO appDAO) {

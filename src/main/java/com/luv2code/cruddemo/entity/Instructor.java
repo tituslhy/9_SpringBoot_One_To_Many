@@ -9,9 +9,12 @@ import lombok.ToString;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * You need to exclude the "courses" attribute from ToString because it is lazy loaded.
+ */
 @Entity
 @Table(name="instructor")
-@ToString
+@ToString(exclude="courses")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -42,8 +45,11 @@ public class Instructor {
 
     /**
      * Map by the instructor property in the course class
+     * You don't have to specify "LAZY" because it's the default. But I'm just doing this
+     * for clarity.
      */
     @OneToMany(
+            fetch = FetchType.LAZY,
             mappedBy="instructor",
             cascade={CascadeType.PERSIST, CascadeType.DETACH,CascadeType.MERGE, CascadeType.REFRESH}
     )

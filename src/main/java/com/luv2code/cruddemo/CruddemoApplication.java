@@ -9,6 +9,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import java.util.List;
+
 @SpringBootApplication
 public class CruddemoApplication {
 
@@ -30,8 +32,98 @@ public class CruddemoApplication {
 //            findInstructorDetail(appDAO);
 //            deleteInstructorDetail(appDAO);
             
-            createInstructorWithCourses(appDAO);
+//            createInstructorWithCourses(appDAO);
+//            findInstructorWithCourses(appDAO);
+//            findCoursesForInstructor(appDAO);
+//            findInstructorWithCoursesJoinFetch(appDAO);
+//            updateInstructor(appDAO);
+//            updateCourse(appDAO);
+            deleteCourse(appDAO);
+
         };
+    }
+
+    private void deleteCourse(AppDAO appDAO) {
+        int theId = 10;
+        appDAO.deleteCourseById(theId);
+        System.out.println("Done!");
+    }
+
+    private void updateCourse(AppDAO appDAO) {
+        int theId = 10;
+        System.out.println("Finding the course id: " + theId);
+        Course course = appDAO.findCourseById(theId);
+
+        System.out.println("Updating course");
+        course.setTitle("Enjoy the simple things");
+
+        appDAO.update(course);
+        System.out.println("Done!");
+    }
+
+    private void updateInstructor(AppDAO appDAO) {
+        int theId = 1;
+        System.out.println("Finding instructor id: " + theId);
+        Instructor tempInstructor = appDAO.findInstructorById(theId);
+
+        // update instructor
+        System.out.println("Updating instructor...");
+        tempInstructor.setLast_name("TESTER");
+        appDAO.update(tempInstructor);
+
+        System.out.println("Instructor updated: " + tempInstructor);
+        System.out.println("Done");
+    }
+
+    private void findInstructorWithCoursesJoinFetch(AppDAO appDAO) {
+        int theId = 1;
+        System.out.println("Finding instructor id: " + theId);
+
+        Instructor tempInstructor = appDAO.findInstructorByIdJoinFetch(theId);
+        System.out.println("The instructor: " + tempInstructor);
+        System.out.println("Associated courses: " + tempInstructor.getCourses());
+
+        System.out.println("Done");
+    }
+
+    /**
+     * One way of overcoming the active Hibernate session requirement for lazy loading is to create another
+     * method and call it specifically (appDAO.findCoursesByInstructorId) in the same method.
+     * @param appDAO
+     */
+    private void findCoursesForInstructor(AppDAO appDAO) {
+        int theId = 1;
+        System.out.println("Finding instructor id: " + theId);
+
+        Instructor tempInstructor = appDAO.findInstructorById(theId);
+        System.out.println("The instructor: " + tempInstructor);
+
+        // find courses for instructor - you have to
+        System.out.println("Finding courses for instructor id: " + theId);
+        List<Course> courses = appDAO.findCoursesByInstructorId(theId);
+
+        // Associate the objects
+        tempInstructor.setCourses(courses);
+
+        System.out.println("Associated courses: " + tempInstructor.getCourses());
+        System.out.println("Done!");
+    }
+
+    /**
+     * This method only works for EAGER loading - set fetch type to EAGER in Instructor.Java's courses attribute
+     * or this will throw an exception
+     * @param appDAO
+     */
+    private void findInstructorWithCourses(AppDAO appDAO) {
+        int theId = 1;
+        System.out.println("Finding instructor id: " + theId);
+
+        Instructor tempInstructor = appDAO.findInstructorById(theId);
+        System.out.println("The instructor: " + tempInstructor);
+        System.out.println("Associated courses: " + tempInstructor.getCourses());
+
+        System.out.println("Done");
+
     }
 
     private void createInstructorWithCourses(AppDAO appDAO) {
@@ -80,7 +172,7 @@ public class CruddemoApplication {
     }
 
     private void deleteInstructor(AppDAO appDAO) {
-        int theId = 2;
+        int theId = 1;
         System.out.println("Deleting instructor: " +  theId);
         appDAO.deleteInstructorById(theId);
         System.out.println("Done!");
